@@ -1,0 +1,9 @@
+*{
+    
+}
+
+#board *{
+    margin: 0;
+    letter-spacing: 5px;
+    font-kerning: none;
+}
