@@ -1,5 +1,8 @@
+//Double array of strings with B, W, or O for black, white and empty respectively
 var board;
+// Holds the current players variable so "W" if whites turn or "B" if blacks turn
 var currentPlayer;
+
 function createBoard(){
     board = new Array(8);
     for(var i = 0; i < board.length; i++){
@@ -15,6 +18,8 @@ function createBoard(){
     board[4][3] = "B";
     board[4][4] = "W";
 }
+
+//TODO: Implement this so its not just crappy UI, or not idc lol
 function printBoard(){
     var boardText = "";
     for(var i  = 0; i < board.length; i ++){
@@ -26,13 +31,145 @@ function printBoard(){
     }
     document.getElementById("board").innerHTML = boardText;
 }
+/*The following functions flip the pieces in the specified direction takes in the piece being played and the location it is played
+DOES NOT CHECK IF THE SPOT IS VALID needs to be used with the check functions when implemented*/
+function flipVerticalUp(pieceRow, pieceCol, colorCheck){
+    curRow = pieceRow - 1;
+    currentSpot = board[curRow][pieceCol];
+    while(currentSpot != colorCheck){
+        if(colorCheck == "W"){
+            board[curRow][pieceCol] = "B";
+        }
+        else{
+            board[curRow][pieceCol] = "W";
+        }
+        curRow--;
+        currentSpot = board[curRow][pieceCol];
+    }
+}
+function flipVerticalDown(pieceRow, pieceCol, colorCheck){
+    curRow = pieceRow + 1;
+    currentSpot = board[curRow][pieceCol];
+    while(currentSpot != colorCheck){
+        if(colorCheck == "W"){
+            board[curRow][pieceCol] = "B";
+        }
+        else{
+            board[curRow][pieceCol] = "W";
+        }
+        curRow++;
+        currentSpot = board[curRow][pieceCol];
+    }
+}
+function flipHorizontalLeft(pieceRow, pieceCol, colorCheck){
+    curCol = pieceCol - 1;
+    currentSpot = board[pieceRow][curCol];
+    while(currentSpot != colorCheck){
+        if(colorCheck == "W"){
+            board[pieceRow][curCol] = "B";
+        }
+        else{
+            board[pieceRow][curCol] = "W";
+        }
+        curCol--;
+        currentSpot = board[pieceRow][curCol];
+    }
+}
+function flipHorizontalRight(pieceRow, pieceCol, colorCheck){
+    curCol = pieceCol + 1;
+    currentSpot = board[pieceRow][curCol];
+    while(currentSpot != colorCheck){
+        if(colorCheck == "W"){
+            board[pieceRow][curCol] = "B";
+        }
+        else{
+            board[pieceRow][curCol] = "W";
+        }
+        curCol++;
+        currentSpot = board[pieceRow][curCol]; 
+    }
+}
+function flipDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
+    var curCol = pieceCol--;
+    var curRow = pieceRow--;
+    var currentSpot = board[curRow][curCol];
+    while(currentSpot != colorCheck){
+        while(currentSpot != colorCheck){
+            if(colorCheck == "W"){
+                board[curRow][curCol] = "B";
+            }
+            else{
+                board[curRow][curCol] = "W";
+            }
+            curCol--;
+            curRow--;
+            currentSpot = board[curRow][curCol]; 
+        }
+    }
+}
+function flipDiagonalTopRight(pieceRow, pieceCol, colorCheck){
+    var curCol = pieceCol++;
+    var curRow = pieceRow--;
+    var currentSpot = board[curRow][curCol];
+    while(currentSpot != colorCheck){
+        while(currentSpot != colorCheck){
+            if(colorCheck == "W"){
+                board[curRow][curCol] = "B";
+            }
+            else{
+                board[curRow][curCol] = "W";
+            }
+            curCol++;
+            curRow--;
+            currentSpot = board[curRow][curCol]; 
+        }
+    }
+}
+function flipDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
+    var curCol = pieceCol--;
+    var curRow = pieceRow++;
+    var currentSpot = board[curRow][curCol];
+    while(currentSpot != colorCheck){
+        while(currentSpot != colorCheck){
+            if(colorCheck == "W"){
+                board[curRow][curCol] = "B";
+            }
+            else{
+                board[curRow][curCol] = "W";
+            }
+            curCol--;
+            curRow++;
+            currentSpot = board[curRow][curCol]; 
+        }
+    }
+}
+function flipDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
+    var curCol = pieceCol++;
+    var curRow = pieceRow++;
+    var currentSpot = board[curRow][curCol];
+    while(currentSpot != colorCheck){
+        while(currentSpot != colorCheck){
+            if(colorCheck == "W"){
+                board[curRow][curCol] = "B";
+            }
+            else{
+                board[curRow][curCol] = "W";
+            }
+            curCol++;
+            curRow++;
+            currentSpot = board[curRow][curCol]; 
+        }
+    }
+}
+
+
 /*Takes piece being placed's row, collumn and color and returns true if there is a line of the opposite color
  that ends with the matching color from that location (play is valid)*/
 function checkVerticalUp(pieceRow, pieceCol, colorCheck){
     if(pieceRow < 2){
         return false;
     }
-    var curLoc = pieceRow-1;
+    var curLoc = pieceRow - 1;
     var currentSpot = board[curLoc][pieceCol];
     if(currentSpot == colorCheck){
         return false;
@@ -86,7 +223,7 @@ function checkHorizontalLeft(pieceRow, pieceCol, colorCheck){
     if(pieceCol < 2){
         return false;
     }
-    var curLoc = pieceCol-1;
+    var curLoc = pieceCol - 1;
     var currentSpot = board[pieceRow][curLoc];
     if(currentSpot == colorCheck){
         return false;
@@ -107,7 +244,7 @@ function checkHorizontalRight(pieceRow, pieceCol, colorCheck){
     if(pieceCol > 5){
         return false;
     }
-    var curLoc = pieceCol+1;
+    var curLoc = pieceCol + 1;
     var currentSpot = board[pieceRow][curLoc];
     if(currentSpot == colorCheck){
         return false;
@@ -130,7 +267,7 @@ function checkDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
     }
     var curCol = pieceCol--;
     var curRow = pieceRow--;
-    var currentSpot = board[curCol][curRow];
+    var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
@@ -143,7 +280,7 @@ function checkDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
         if(curCol < 0 || curRow < 0){
             return false;
         }
-        currentSpot[curCol][curRow];
+        currentSpot[curRow][curCol];
     }
     return true;
 }
@@ -153,7 +290,7 @@ function checkDiagonalTopRight(pieceRow, pieceCol, colorCheck){
     }
     var curCol = pieceCol++;
     var curRow = pieceRow--;
-    var currentSpot = board[curCol][curRow];
+    var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
@@ -166,7 +303,7 @@ function checkDiagonalTopRight(pieceRow, pieceCol, colorCheck){
         if(curCol > 7 || curRow < 0){
             return false;
         }
-        currentSpot[curCol][curRow];
+        currentSpot[curRow][curCol];
     }
     return true;
 }
@@ -176,7 +313,7 @@ function checkDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
     }
     var curCol = pieceCol--;
     var curRow = pieceRow++;
-    var currentSpot = board[curCol][curRow];
+    var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
@@ -189,7 +326,7 @@ function checkDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
         if(curCol < 0 || curRow > 7){
             return false;
         }
-        currentSpot[curCol][curRow];
+        currentSpot[curRow][curCol];
     }
     return true;
 }
@@ -199,7 +336,7 @@ function checkDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
     }
     var curCol = pieceCol++;
     var curRow = pieceRow++;
-    var currentSpot = board[curCol][curRow];
+    var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
@@ -212,7 +349,7 @@ function checkDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
         if(curCol > 7 || curRow > 7){
             return false;
         }
-        currentSpot[curCol][curRow];
+        currentSpot[curRow][curCol];
     }
     return true;
 }
@@ -242,5 +379,53 @@ function checkValidTurn(){
 }
 //Makes move at specified position
 function makeMove(pieceRow, pieceCol){
+    //check each direction and if it works then call the respective flip function
+    if(checkVerticalUp(pieceRow, pieceCol, currentPlayer)){
+        flipVerticalUp(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkVerticalDown(pieceRow, pieceCol, currentPlayer)){
+        flipVerticalDown(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkHorizontalLeft(pieceRow, pieceCol, currentPlayer)){
+        flipHorizontalLeft(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkHorizontalRight(pieceRow, pieceCol, currentPlayer)){
+        flipHorizontalRight(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer)){
+        flipDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkDiagonalBottomRight(pieceRow, pieceCol, currentPlayer)){
+        flipDiagonalBottomRight(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkDiagonalTopLeft(pieceRow, pieceCol, currentPlayer)){
+        flipDiagonalTopLeft(pieceRow, pieceCol, currentPlayer);
+    }
+    if(checkDiagonalTopRight(pieceRow, pieceCol, currentPlayer)){
+        flipDiagonalTopRight(pieceRow, pieceCol, currentPlayer);
+    }
+    //Swap turn so now it is the other players turn
+    if(currentPlayer == "B"){
+        currentPlayer = "W";
+    }
+    if(currentPlayer == "W"){
+        currentPlayer = "B";
+    }
+    //Check if the new player can make a move, if not the game ends
+    if(!checkValidTurn()){
+        endGame();
+    }
     
+}
+
+//Starts the game, black always goes first
+function startGame(){
+    currentPlayer = "B";
+    createBoard();
+    printBoard();
+}
+
+//TODO EMPTY FUNCTIONS
+function endGame(){
+    //The current player is the loser, failed the check
 }
