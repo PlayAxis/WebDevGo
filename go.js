@@ -405,19 +405,24 @@ function makeMove(pieceRow, pieceCol){
         flipDiagonalTopRight(pieceRow, pieceCol, currentPlayer);
     }
     //Swap turn so now it is the other players turn
+    swapPlayer();
+    //Check if the new player can make a move, if not then see if the other player can make a move, if not then the game ends
+    if(!checkValidTurn()){
+        swapPlayer();
+        if(!checkValidTurn()){
+            endGame();
+        }
+    }
+    
+}
+function swapPlayer(){
     if(currentPlayer == "B"){
         currentPlayer = "W";
     }
     if(currentPlayer == "W"){
         currentPlayer = "B";
     }
-    //Check if the new player can make a move, if not the game ends
-    if(!checkValidTurn()){
-        endGame();
-    }
-    
 }
-
 //Starts the game, black always goes first
 function startGame(){
     currentPlayer = "B";
@@ -425,7 +430,24 @@ function startGame(){
     printBoard();
 }
 
-//TODO EMPTY FUNCTIONS
+//TODO Make things happen when they win
 function endGame(){
-    //The current player is the loser, failed the check
+    var wCount = 0;
+    var bCount = 0;
+    for(var i = 0;  i < board.length; i++){
+        for(var j = 0; j < board[i].length; j++){
+            if(board[i][j] == "B"){
+                bCount++;
+            }
+            if(board[i][j] == "W"){
+                wCount++;
+            }
+        }
+    }
+    if(wCount > bCount){
+        //White wins! implement please (:
+    }
+    else{
+        //Black wins1 implement pretty please (:
+    }
 }
