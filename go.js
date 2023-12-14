@@ -2,6 +2,50 @@
 var board;
 // Holds the current players variable so "W" if whites turn or "B" if blacks turn
 var currentPlayer;
+// initialize canvas
+const canvas = document.getElementById("goCanvas");
+const ctx = canvas.getContext("2d");
+
+function drawCanvas() {
+    // reset canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < board.length; i++) {
+        for(var j = 0; j < board[i].length; j++) {
+            switch(board[i][j]) {
+                case "O":
+                    let space = new Path2D();
+                    let space_i = i;
+                    let space_j = j;
+                    space.rect(j*80, i*80, 80, 80);
+                    ctx.stroke(space);
+                    space.closePath();
+                    canvas.addEventListener("click", e => {
+                        if (ctx.isPointInPath(space, e.offsetX, e.offsetY)) {
+                            makeMove(space_i, space_j);   
+                        }
+                    });
+                    break;
+                case "W":
+                    ctx.beginPath();
+                    ctx.arc(j * 80 + 40, i * 80 + 40, 40, 0, 2 * Math.PI);
+                    ctx.fillStyle = "white";
+                    ctx.fill()
+                    ctx.stroke();
+                    ctx.closePath();
+                    break;
+                case "B":
+                    ctx.beginPath();
+                    ctx.arc(j * 80 + 40, i * 80 + 40, 40, 0, 2 * Math.PI);
+                    ctx.fillStyle = "black";
+                    ctx.fill()
+                    ctx.stroke();
+                    ctx.closePath();
+                    break;
+            }
+        }
+    }
+}
 
 function createBoard(){
     board = new Array(8);
@@ -29,8 +73,12 @@ function printBoard(){
         }
         boardText += "</p>";
     }
+
+    drawCanvas();
+
     document.getElementById("board").innerHTML = boardText;
 }
+
 /*The following functions flip the pieces in the specified direction takes in the piece being played and the location it is played
 DOES NOT CHECK IF THE SPOT IS VALID needs to be used with the check functions when implemented*/
 function flipVerticalUp(pieceRow, pieceCol, colorCheck){
@@ -161,7 +209,6 @@ function flipDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
         }
     }
 }
-
 
 /*Takes piece being placed's row, collumn and color and returns true if there is a line of the opposite color
  that ends with the matching color from that location (play is valid)*/
@@ -353,6 +400,7 @@ function checkDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
     }
     return true;
 }
+
 //Just uses all functions to see if a location is a valid move
 function checkSurroundingLocations(pieceRow, pieceCol, colorCheck){
     if(checkVerticalUp(pieceRow, pieceCol, colorCheck) || checkVerticalDown(pieceRow, pieceCol, colorCheck) ||
@@ -379,6 +427,13 @@ function checkValidTurn(){
 }
 //Makes move at specified position
 function makeMove(pieceRow, pieceCol){
+    if (currentPlayer == "B") {
+        board[pieceRow][pieceCol] = "B";
+    }
+    else {
+        board[pieceRow][pieceCol] = "W";
+    }
+    
     //check each direction and if it works then call the respective flip function
     if(checkVerticalUp(pieceRow, pieceCol, currentPlayer)){
         flipVerticalUp(pieceRow, pieceCol, currentPlayer);
@@ -418,14 +473,18 @@ function makeMove(pieceRow, pieceCol){
 function swapPlayer(){
     if(currentPlayer == "B"){
         currentPlayer = "W";
+        document.getElementById("turn").innerHTML = "White's turn";
     }
     if(currentPlayer == "W"){
         currentPlayer = "B";
+        document.getElementById("turn").innerHTML = "Black's turn";
     }
+    printBoard();
 }
 //Starts the game, black always goes first
 function startGame(){
     currentPlayer = "B";
+    document.getElementById("turn").innerHTML = "Black's turn";
     createBoard();
     printBoard();
 }
