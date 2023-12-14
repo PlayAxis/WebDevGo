@@ -6,27 +6,29 @@ var currentPlayer;
 const canvas = document.getElementById("goCanvas");
 const ctx = canvas.getContext("2d");
 
+var spaces = [];
+var spaces_i = [];
+var spaces_j = [];
+ 
 function drawCanvas() {
-    // reset canvas
+    // reset canvas and spaces
+    canvas.removeEventListener('click', arguments.callee, false);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    spaces = [];
+    spaces_i = [];
+    spaces_j = [];
 
     for (var i = 0; i < board.length; i++) {
         for(var j = 0; j < board[i].length; j++) {
             switch(board[i][j]) {
                 case "O":
                     let space = new Path2D();
-                    let space_i = i;
-                    let space_j = j;
                     space.rect(j*80, i*80, 80, 80);
                     ctx.stroke(space);
                     space.closePath();
-                    canvas.addEventListener("click", e => {
-                        if (ctx.isPointInPath(space, e.offsetX, e.offsetY)) {
-                            if(checkSurroundingLocations(space_i, space_j, currentPlayer)){
-                                makeMove(space_i, space_j);
-                            }
-                        }
-                    });
+                    spaces.push(space);
+                    spaces_i.push(i);
+                    spaces_j.push(j);
                     break;
                 case "W":
                     ctx.beginPath();
@@ -57,6 +59,16 @@ function drawCanvas() {
             }
         }
     }
+
+    canvas.addEventListener("click", function(event) {
+        spaces.forEach((space, index) => {
+            if (ctx.isPointInPath(space, event.offsetX, event.offsetY)) {
+                if(checkSurroundingLocations(spaces_i[index], spaces_j[index], currentPlayer)){
+                    makeMove(spaces_i[index], spaces_j[index]);
+                }
+            }
+        });
+    });
 }
 
 function createBoard(){
@@ -429,12 +441,12 @@ function checkValidTurn(){
     for(var i = 0; i < board.length; i++){
         for(var j = 0; j < board.length; j++){
             if(checkSurroundingLocations(i, j, currentPlayer)){
-                document.getElementById("flipdebug").innerHTML = "moves";
+                // document.getElementById("flipdebug").innerHTML = "moves";
                 return true;
             }
         }
     }
-    document.getElementById("flipdebug").innerHTML = "No moves";
+    // document.getElementById("flipdebug").innerHTML = "No moves";
     return true;
 }
 //Makes move at specified position
@@ -451,7 +463,7 @@ function makeMove(pieceRow, pieceCol){
         flipVerticalUp(pieceRow, pieceCol, currentPlayer);
     }
     if(checkVerticalDown(pieceRow, pieceCol, currentPlayer)){
-        document.getElementById("flip").innerHTML = "Flipping vertical down";
+        // document.getElementById("flip").innerHTML = "Flipping vertical down";
         flipVerticalDown(pieceRow, pieceCol, currentPlayer);
     }
     if(checkHorizontalLeft(pieceRow, pieceCol, currentPlayer)){
@@ -461,7 +473,7 @@ function makeMove(pieceRow, pieceCol){
         flipHorizontalRight(pieceRow, pieceCol, currentPlayer);
     }
     if(checkDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer)){
-        document.getElementById("flip").innerHTML = "Flipping diagonal Bottom left";
+        // document.getElementById("flip").innerHTML = "Flipping diagonal Bottom left";
         flipDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer);
     }
     if(checkDiagonalBottomRight(pieceRow, pieceCol, currentPlayer)){
@@ -486,16 +498,21 @@ function makeMove(pieceRow, pieceCol){
     
 }
 function swapPlayer(){
-    alert("Switching players");
+    // alert("Switching players");
     if(currentPlayer == "B"){
         currentPlayer = "W";
         document.getElementById("turn").innerHTML = "White's turn";
+        document.getElementById("turn").style.color = "black";
+        document.getElementById("turn").style.backgroundColor = "white";
     }
     else if(currentPlayer == "W"){
         currentPlayer = "B";
         document.getElementById("turn").innerHTML = "Black's turn";
+        document.getElementById("turn").style.color = "white";
+        document.getElementById("turn").style.backgroundColor = "black";
     }
     printBoard();
+    endGame();
 }
 //Starts the game, black always goes first
 function startGame(){
@@ -509,6 +526,7 @@ function startGame(){
 function endGame(){
     var wCount = 0;
     var bCount = 0;
+    var oCount = 0;
     for(var i = 0;  i < board.length; i++){
         for(var j = 0; j < board[i].length; j++){
             if(board[i][j] == "B"){
@@ -517,12 +535,22 @@ function endGame(){
             if(board[i][j] == "W"){
                 wCount++;
             }
+            if(board[i][j] == "O"){
+                oCount++;
+                break;
+            }
         }
     }
-    if(wCount > bCount){
-        //White wins! implement please (:
+    if(oCount > 0) {
+    }
+    else if(wCount > bCount){
+        document.getElementById("turn").innerHTML = "White wins!";
+        document.getElementById("turn").style.color = "black";
+        document.getElementById("turn").style.backgroundColor = "white";
     }
     else{
-        //Black wins1 implement pretty please (:
+        document.getElementById("turn").innerHTML = "Black wins!";
+        document.getElementById("turn").style.color = "white";
+        document.getElementById("turn").style.backgroundColor = "black";
     }
 }
