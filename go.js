@@ -30,6 +30,11 @@ function drawCanvas() {
                     break;
                 case "W":
                     ctx.beginPath();
+                    ctx.rect(j*80, i*80, 80, 80);
+                    ctx.stroke();
+                    ctx.closePath();
+
+                    ctx.beginPath();
                     ctx.arc(j * 80 + 40, i * 80 + 40, 40, 0, 2 * Math.PI);
                     ctx.fillStyle = "white";
                     ctx.fill()
@@ -37,6 +42,11 @@ function drawCanvas() {
                     ctx.closePath();
                     break;
                 case "B":
+                    ctx.beginPath();
+                    ctx.rect(j*80, i*80, 80, 80);
+                    ctx.stroke();
+                    ctx.closePath();
+                    
                     ctx.beginPath();
                     ctx.arc(j * 80 + 40, i * 80 + 40, 40, 0, 2 * Math.PI);
                     ctx.fillStyle = "black";
