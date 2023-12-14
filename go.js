@@ -22,7 +22,9 @@ function drawCanvas() {
                     space.closePath();
                     canvas.addEventListener("click", e => {
                         if (ctx.isPointInPath(space, e.offsetX, e.offsetY)) {
-                            makeMove(space_i, space_j);   
+                            if(checkSurroundingLocations(space_i, space_j, currentPlayer)){
+                                makeMove(space_i, space_j);
+                            }
                         }
                     });
                     break;
@@ -63,7 +65,6 @@ function createBoard(){
     board[4][4] = "W";
 }
 
-//TODO: Implement this so its not just crappy UI, or not idc lol
 function printBoard(){
     var boardText = "";
     for(var i  = 0; i < board.length; i ++){
@@ -82,14 +83,14 @@ function printBoard(){
 /*The following functions flip the pieces in the specified direction takes in the piece being played and the location it is played
 DOES NOT CHECK IF THE SPOT IS VALID needs to be used with the check functions when implemented*/
 function flipVerticalUp(pieceRow, pieceCol, colorCheck){
-    curRow = pieceRow - 1;
-    currentSpot = board[curRow][pieceCol];
+    var curRow = pieceRow - 1;
+    var currentSpot = board[curRow][pieceCol];
     while(currentSpot != colorCheck){
         if(colorCheck == "W"){
-            board[curRow][pieceCol] = "B";
+            board[curRow][pieceCol] = "W";
         }
         else{
-            board[curRow][pieceCol] = "W";
+            board[curRow][pieceCol] = "B";
         }
         curRow--;
         currentSpot = board[curRow][pieceCol];
@@ -100,10 +101,10 @@ function flipVerticalDown(pieceRow, pieceCol, colorCheck){
     currentSpot = board[curRow][pieceCol];
     while(currentSpot != colorCheck){
         if(colorCheck == "W"){
-            board[curRow][pieceCol] = "B";
+            board[curRow][pieceCol] = "W";
         }
         else{
-            board[curRow][pieceCol] = "W";
+            board[curRow][pieceCol] = "B";
         }
         curRow++;
         currentSpot = board[curRow][pieceCol];
@@ -114,10 +115,10 @@ function flipHorizontalLeft(pieceRow, pieceCol, colorCheck){
     currentSpot = board[pieceRow][curCol];
     while(currentSpot != colorCheck){
         if(colorCheck == "W"){
-            board[pieceRow][curCol] = "B";
+            board[pieceRow][curCol] = "W";
         }
         else{
-            board[pieceRow][curCol] = "W";
+            board[pieceRow][curCol] = "B";
         }
         curCol--;
         currentSpot = board[pieceRow][curCol];
@@ -128,44 +129,44 @@ function flipHorizontalRight(pieceRow, pieceCol, colorCheck){
     currentSpot = board[pieceRow][curCol];
     while(currentSpot != colorCheck){
         if(colorCheck == "W"){
-            board[pieceRow][curCol] = "B";
+            board[pieceRow][curCol] = "W";
         }
         else{
-            board[pieceRow][curCol] = "W";
+            board[pieceRow][curCol] = "B";
         }
         curCol++;
         currentSpot = board[pieceRow][curCol]; 
     }
 }
 function flipDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
-    var curCol = pieceCol--;
-    var curRow = pieceRow--;
+    var curCol = pieceCol-1;
+    var curRow = pieceRow-1;
     var currentSpot = board[curRow][curCol];
     while(currentSpot != colorCheck){
         while(currentSpot != colorCheck){
             if(colorCheck == "W"){
-                board[curRow][curCol] = "B";
+                board[curRow][curCol] = "W";
             }
             else{
-                board[curRow][curCol] = "W";
+                board[curRow][curCol] = "B";
             }
             curCol--;
             curRow--;
-            currentSpot = board[curRow][curCol]; 
+            currentSpot = board[curRow][curCol];
         }
     }
 }
 function flipDiagonalTopRight(pieceRow, pieceCol, colorCheck){
-    var curCol = pieceCol++;
-    var curRow = pieceRow--;
+    var curCol = pieceCol+1;
+    var curRow = pieceRow-1;
     var currentSpot = board[curRow][curCol];
     while(currentSpot != colorCheck){
         while(currentSpot != colorCheck){
             if(colorCheck == "W"){
-                board[curRow][curCol] = "B";
+                board[curRow][curCol] = "W";
             }
             else{
-                board[curRow][curCol] = "W";
+                board[curRow][curCol] = "B";
             }
             curCol++;
             curRow--;
@@ -174,34 +175,33 @@ function flipDiagonalTopRight(pieceRow, pieceCol, colorCheck){
     }
 }
 function flipDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
-    var curCol = pieceCol--;
-    var curRow = pieceRow++;
+    var curCol = pieceCol - 1;
+    var curRow = pieceRow + 1;
     var currentSpot = board[curRow][curCol];
     while(currentSpot != colorCheck){
-        while(currentSpot != colorCheck){
-            if(colorCheck == "W"){
-                board[curRow][curCol] = "B";
-            }
-            else{
-                board[curRow][curCol] = "W";
-            }
-            curCol--;
-            curRow++;
-            currentSpot = board[curRow][curCol]; 
+        if(colorCheck == "W"){
+            board[curRow][curCol] = "W";
         }
+        else{
+            board[curRow][curCol] = "B";
+        }
+        curCol--;
+        curRow++;
+        currentSpot = board[curRow][curCol];
     }
+    //document.getElementById("flipdebug").innerHTML = "While loop over lol";
 }
 function flipDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
-    var curCol = pieceCol++;
-    var curRow = pieceRow++;
+    var curCol = pieceCol+1;
+    var curRow = pieceRow+1;
     var currentSpot = board[curRow][curCol];
     while(currentSpot != colorCheck){
         while(currentSpot != colorCheck){
             if(colorCheck == "W"){
-                board[curRow][curCol] = "B";
+                board[curRow][curCol] = "W";
             }
             else{
-                board[curRow][curCol] = "W";
+                board[curRow][curCol] = "B";
             }
             curCol++;
             curRow++;
@@ -312,14 +312,14 @@ function checkDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
     if(pieceCol < 2 || pieceRow < 2){
         return false;
     }
-    var curCol = pieceCol--;
-    var curRow = pieceRow--;
+    var curCol = pieceCol-1;
+    var curRow = pieceRow-1;
     var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
     while(currentSpot != colorCheck){
-        if(currentSpot){
+        if(currentSpot == "O"){
             return false;
         }
         curCol--;
@@ -327,7 +327,7 @@ function checkDiagonalTopLeft(pieceRow, pieceCol, colorCheck){
         if(curCol < 0 || curRow < 0){
             return false;
         }
-        currentSpot[curRow][curCol];
+        currentSpot = board[curRow][curCol];
     }
     return true;
 }
@@ -335,14 +335,14 @@ function checkDiagonalTopRight(pieceRow, pieceCol, colorCheck){
     if(pieceCol > 5 || pieceRow < 2){
         return false;
     }
-    var curCol = pieceCol++;
-    var curRow = pieceRow--;
+    var curCol = pieceCol+1;
+    var curRow = pieceRow-1;
     var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
     while(currentSpot != colorCheck){
-        if(currentSpot){
+        if(currentSpot == "O"){
             return false;
         }
         curCol++;
@@ -350,22 +350,22 @@ function checkDiagonalTopRight(pieceRow, pieceCol, colorCheck){
         if(curCol > 7 || curRow < 0){
             return false;
         }
-        currentSpot[curRow][curCol];
+        currentSpot = board[curRow][curCol];
     }
     return true;
 }
 function checkDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
-    if(pieceCol > 5 || pieceRow < 2){
+    if(pieceCol < 2 || pieceRow > 5){
         return false;
     }
-    var curCol = pieceCol--;
-    var curRow = pieceRow++;
+    var curCol = pieceCol - 1;
+    var curRow = pieceRow + 1;
     var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
     while(currentSpot != colorCheck){
-        if(currentSpot){
+        if(currentSpot == "O"){
             return false;
         }
         curCol--;
@@ -373,7 +373,7 @@ function checkDiagonalBottomLeft(pieceRow, pieceCol, colorCheck){
         if(curCol < 0 || curRow > 7){
             return false;
         }
-        currentSpot[curRow][curCol];
+        currentSpot = board[curRow][curCol];
     }
     return true;
 }
@@ -381,14 +381,14 @@ function checkDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
     if(pieceCol > 5 || pieceRow > 5){
         return false;
     }
-    var curCol = pieceCol++;
-    var curRow = pieceRow++;
+    var curCol = pieceCol+1;
+    var curRow = pieceRow+1;
     var currentSpot = board[curRow][curCol];
     if(currentSpot == colorCheck){
         return false;
     }
     while(currentSpot != colorCheck){
-        if(currentSpot){
+        if(currentSpot == "O"){
             return false;
         }
         curCol++;
@@ -396,7 +396,7 @@ function checkDiagonalBottomRight(pieceRow, pieceCol, colorCheck){
         if(curCol > 7 || curRow > 7){
             return false;
         }
-        currentSpot[curRow][curCol];
+        currentSpot = board[curRow][curCol];
     }
     return true;
 }
@@ -419,11 +419,13 @@ function checkValidTurn(){
     for(var i = 0; i < board.length; i++){
         for(var j = 0; j < board.length; j++){
             if(checkSurroundingLocations(i, j, currentPlayer)){
+                document.getElementById("flipdebug").innerHTML = "moves";
                 return true;
             }
         }
     }
-    return false;
+    document.getElementById("flipdebug").innerHTML = "No moves";
+    return true;
 }
 //Makes move at specified position
 function makeMove(pieceRow, pieceCol){
@@ -439,6 +441,7 @@ function makeMove(pieceRow, pieceCol){
         flipVerticalUp(pieceRow, pieceCol, currentPlayer);
     }
     if(checkVerticalDown(pieceRow, pieceCol, currentPlayer)){
+        document.getElementById("flip").innerHTML = "Flipping vertical down";
         flipVerticalDown(pieceRow, pieceCol, currentPlayer);
     }
     if(checkHorizontalLeft(pieceRow, pieceCol, currentPlayer)){
@@ -448,6 +451,7 @@ function makeMove(pieceRow, pieceCol){
         flipHorizontalRight(pieceRow, pieceCol, currentPlayer);
     }
     if(checkDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer)){
+        document.getElementById("flip").innerHTML = "Flipping diagonal Bottom left";
         flipDiagonalBottomLeft(pieceRow, pieceCol, currentPlayer);
     }
     if(checkDiagonalBottomRight(pieceRow, pieceCol, currentPlayer)){
@@ -465,17 +469,19 @@ function makeMove(pieceRow, pieceCol){
     if(!checkValidTurn()){
         swapPlayer();
         if(!checkValidTurn()){
+            document.getElementById("turn").innerHTML = "Game Over";
             endGame();
         }
     }
     
 }
 function swapPlayer(){
+    alert("Switching players");
     if(currentPlayer == "B"){
         currentPlayer = "W";
         document.getElementById("turn").innerHTML = "White's turn";
     }
-    if(currentPlayer == "W"){
+    else if(currentPlayer == "W"){
         currentPlayer = "B";
         document.getElementById("turn").innerHTML = "Black's turn";
     }
