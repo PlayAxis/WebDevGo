@@ -9,3 +9,7 @@ was necessary for each direction to check for pieces to flip. Another difficulty
 spots for places to be put down as a player can only place pieces in a spot that will flip an opposing
 piece. Overall, the project required a lot of JavaScript logic to get working correctly and usage
 of HTML Canvas to fully come together, and was good practice in both fields.
+
+Roughly, this project took about as much time and effort as the other projects in the class for each
+team member, thus, it should be deserving of 100 points as it is comparable to previous assignments
+in effort and time.  
